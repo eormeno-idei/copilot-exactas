@@ -2,14 +2,43 @@
 let currentSlide = 0;
 let totalSlides = 0;
 let slideFiles = [];
+let router;
 
 // Cargar slides al iniciar
 document.addEventListener('DOMContentLoaded', async function() {
+    console.log('DOM cargado, iniciando proceso...');
     await loadSlideList();
-    loadAllSlides();
+    console.log(`Lista de slides cargada: ${slideFiles.length} slides`);
+    await loadAllSlides();  // Hacer await para que termine antes de inicializar el router
+    console.log('Todos los slides cargados');
+    initializeRouter();
+    console.log('Router inicializado');
     updateSlideCounter();
     updateNavigationButtons();
+    setupEventListeners();
+    console.log('Event listeners configurados');
 });
+
+// Configurar event listeners
+function setupEventListeners() {
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const printBtn = document.getElementById('print-btn');
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    
+    if (prevBtn) {
+        prevBtn.addEventListener('click', previousSlide);
+    }
+    if (nextBtn) {
+        nextBtn.addEventListener('click', nextSlide);
+    }
+    if (printBtn) {
+        printBtn.addEventListener('click', exportToPDF);
+    }
+    if (fullscreenBtn) {
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
+    }
+}
 
 // Cargar lista de slides dinámicamente
 async function loadSlideList() {
@@ -61,13 +90,21 @@ async function loadAllSlides() {
         }
     }
     
-    // Mostrar el primer slide
-    showSlide(0);
+    // No mostrar ningún slide aquí, dejar que el router se encargue
 }
 
 // Mostrar slide específico
-function showSlide(index) {
+function showSlide(index, updateUrl = true) {
+    // Validar índice
+    if (index < 0 || index >= totalSlides) {
+        console.error('Índice de slide inválido:', index);
+        return;
+    }
+    
+    console.log(`showSlide llamado con index: ${index}, currentSlide antes: ${currentSlide}`);
+    
     const slides = document.querySelectorAll('.slide');
+    console.log(`Slides encontrados: ${slides.length}`);
     
     // Ocultar todos los slides
     slides.forEach(slide => slide.classList.remove('active'));
@@ -76,22 +113,44 @@ function showSlide(index) {
     if (slides[index]) {
         slides[index].classList.add('active');
         currentSlide = index;
+        console.log(`currentSlide actualizado a: ${currentSlide}`);
         updateSlideCounter();
         updateNavigationButtons();
+        
+        // Actualizar URL sin recargar la página
+        if (updateUrl && router) {
+            let route;
+            if (index === 0) {
+                route = '/';
+            } else if (index === totalSlides - 1) {
+                route = '/fin';
+            } else {
+                route = `/${index}`;
+            }
+            router.navigate(route, false); // false para no disparar el handler
+        }
+    } else {
+        console.error(`No se encontró slide con índice ${index}`);
     }
 }
 
 // Slide siguiente
 function nextSlide() {
+    console.log('nextSlide llamado, currentSlide:', currentSlide, 'totalSlides:', totalSlides);
     if (currentSlide < totalSlides - 1) {
         showSlide(currentSlide + 1);
+    } else {
+        console.log('Ya estás en el último slide');
     }
 }
 
 // Slide anterior
 function previousSlide() {
+    console.log('previousSlide llamado, currentSlide:', currentSlide);
     if (currentSlide > 0) {
         showSlide(currentSlide - 1);
+    } else {
+        console.log('Ya estás en el primer slide');
     }
 }
 
@@ -106,8 +165,16 @@ function updateNavigationButtons() {
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
     
-    prevBtn.disabled = currentSlide === 0;
-    nextBtn.disabled = currentSlide === totalSlides - 1;
+    console.log(`updateNavigationButtons: currentSlide=${currentSlide}, totalSlides=${totalSlides}`);
+    
+    if (prevBtn) {
+        prevBtn.disabled = currentSlide === 0;
+        console.log(`Botón anterior ${currentSlide === 0 ? 'deshabilitado' : 'habilitado'}`);
+    }
+    if (nextBtn) {
+        nextBtn.disabled = currentSlide === totalSlides - 1;
+        console.log(`Botón siguiente ${currentSlide === totalSlides - 1 ? 'deshabilitado' : 'habilitado'}`);
+    }
 }
 
 // Navegación con teclado
@@ -165,6 +232,60 @@ function toggleFullscreen() {
         });
     } else {
         document.exitFullscreen();
+    }
+}
+
+// Inicializar router
+function initializeRouter() {
+    // Crear nueva instancia de Navigo
+    router = new Navigo('/', { hash: true });
+    
+    // Definir rutas
+    router
+        .on({
+            '/': function() {
+                console.log('Ruta "/" - mostrando slide 0');
+                showSlide(0, false); // false para evitar loop infinito
+            },
+            '/fin': function() {
+                console.log('Ruta "/fin" - mostrando último slide');
+                showSlide(totalSlides - 1, false);
+            },
+            '/:slideNumber': function(params) {
+                const slideIndex = parseInt(params.data.slideNumber);
+                console.log('Ruta con número:', slideIndex, 'params:', params);
+                if (!isNaN(slideIndex) && slideIndex >= 1 && slideIndex <= totalSlides - 2) {
+                    showSlide(slideIndex, false);
+                } else {
+                    console.log('Número de slide inválido, redirigiendo a inicio');
+                    router.navigate('/');
+                }
+            }
+        })
+        .notFound(function() {
+            console.log('Ruta no encontrada, redirigiendo a inicio');
+            router.navigate('/');
+        });
+    
+    // Si no hay hash en la URL, mostrar el primer slide por defecto
+    if (!window.location.hash) {
+        console.log('No hay hash, mostrando slide 0 por defecto');
+        showSlide(0, false);
+    }
+    
+    // Iniciar el router
+    router.resolve();
+}
+
+// Función para obtener enlace compartible del slide actual
+function getShareableLink() {
+    const baseUrl = window.location.origin + window.location.pathname;
+    if (currentSlide === 0) {
+        return baseUrl;
+    } else if (currentSlide === totalSlides - 1) {
+        return baseUrl + '#/fin';
+    } else {
+        return baseUrl + `#/${currentSlide}`;
     }
 }
 
