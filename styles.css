@@ -122,6 +122,26 @@ li::before {
     border-left: 5px solid #27ae60;
 }
 
+.highlight ul {
+    text-align: left;
+    max-width: none;
+    margin: 15px 0;
+    padding-left: 0;
+}
+
+.highlight li {
+    margin-bottom: 8px;
+    padding-left: 0;
+}
+
+.highlight li::before {
+    content: "✓";
+    color: #27ae60;
+    font-weight: bold;
+    position: absolute;
+    left: -20px;
+}
+
 .warning {
     background: linear-gradient(120deg, #ffeaa7 0%, #fab1a0 100%);
     padding: 15px;
@@ -282,10 +302,95 @@ li::before {
     color: #bdc3c7;
 }
 
+/* Estilos para imágenes en slides */
+.slide-image {
+    max-width: 400px;
+    max-height: 300px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    margin: 20px 0;
+    transition: transform 0.3s ease;
+}
+
+.slide-image:hover {
+    transform: scale(1.05);
+}
+
+/* Layout con imagen siempre a la derecha */
+.slide-with-image {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 40px;
+    align-items: center;
+    max-width: 1200px;
+    width: 100%;
+}
+
+.slide-content {
+    text-align: left;
+}
+
+.slide-content h1,
+.slide-content h2 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Layout centrado también con imagen a la derecha */
+.slide-centered-image {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 40px;
+    align-items: center;
+    max-width: 1200px;
+    width: 100%;
+    text-align: left;
+}
+
+.slide-centered-image h1,
+.slide-centered-image h2 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Ajustes para imágenes en slides específicos */
+.slide-centered-image ul,
+.slide-with-image ul {
+    text-align: left;
+    max-width: none;
+    margin: 20px 0;
+}
+
+.slide-centered-image .slide-content ul,
+.slide-with-image .slide-content ul {
+    text-align: left;
+    max-width: none;
+    margin: 20px 0;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .slide {
         padding: 30px 20px;
+    }
+    
+    .slide-with-image {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        text-align: center;
+    }
+    
+    .slide-content {
+        text-align: center;
+    }
+    
+    .slide-image {
+        max-width: 280px;
+        max-height: 200px;
+        margin: 15px auto;
     }
     
     h1 { font-size: 2rem; }

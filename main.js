@@ -8,9 +8,9 @@ let router;
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('DOM cargado, iniciando proceso...');
     await loadSlideList();
-    console.log(`Lista de slides cargada: ${slideFiles.length} slides`);
+    console.log(`Lista de slides cargada: ${slideFiles.length} slides, totalSlides: ${totalSlides}`);
     await loadAllSlides();  // Hacer await para que termine antes de inicializar el router
-    console.log('Todos los slides cargados');
+    console.log('Todos los slides cargados, totalSlides final:', totalSlides);
     initializeRouter();
     console.log('Router inicializado');
     updateSlideCounter();
@@ -97,11 +97,11 @@ async function loadAllSlides() {
 function showSlide(index, updateUrl = true) {
     // Validar índice
     if (index < 0 || index >= totalSlides) {
-        console.error('Índice de slide inválido:', index);
+        console.error('Índice de slide inválido:', index, 'totalSlides:', totalSlides);
         return;
     }
     
-    console.log(`showSlide llamado con index: ${index}, currentSlide antes: ${currentSlide}`);
+    console.log(`showSlide llamado con index: ${index}, currentSlide antes: ${currentSlide}, totalSlides: ${totalSlides}`);
     
     const slides = document.querySelectorAll('.slide');
     console.log(`Slides encontrados: ${slides.length}`);
@@ -122,11 +122,10 @@ function showSlide(index, updateUrl = true) {
             let route;
             if (index === 0) {
                 route = '/';
-            } else if (index === totalSlides - 1) {
-                route = '/fin';
             } else {
                 route = `/${index}`;
             }
+            console.log(`Navegando a ruta: ${route} para índice ${index} (totalSlides: ${totalSlides})`);
             router.navigate(route, false); // false para no disparar el handler
         }
     } else {
@@ -237,6 +236,14 @@ function toggleFullscreen() {
 
 // Inicializar router
 function initializeRouter() {
+    console.log('Inicializando router con totalSlides:', totalSlides);
+    
+    // Verificar que totalSlides sea válido
+    if (totalSlides === 0) {
+        console.error('Error: totalSlides es 0, no se puede inicializar el router');
+        return;
+    }
+    
     // Crear nueva instancia de Navigo
     router = new Navigo('/', { hash: true });
     
@@ -247,18 +254,16 @@ function initializeRouter() {
                 console.log('Ruta "/" - mostrando slide 0');
                 showSlide(0, false); // false para evitar loop infinito
             },
-            '/fin': function() {
-                console.log('Ruta "/fin" - mostrando último slide');
-                showSlide(totalSlides - 1, false);
-            },
             '/:slideNumber': function(params) {
                 const slideIndex = parseInt(params.data.slideNumber);
                 console.log('Ruta con número:', slideIndex, 'params:', params);
-                if (!isNaN(slideIndex) && slideIndex >= 1 && slideIndex <= totalSlides - 2) {
+                console.log('totalSlides:', totalSlides, 'validando rango 0 a', totalSlides - 1);
+                // Permitir slides del 0 al totalSlides-1
+                if (!isNaN(slideIndex) && slideIndex >= 0 && slideIndex < totalSlides) {
                     showSlide(slideIndex, false);
                 } else {
                     console.log('Número de slide inválido, redirigiendo a inicio');
-                    router.navigate('/');
+                    router.navigate('/0');
                 }
             }
         })
@@ -282,8 +287,6 @@ function getShareableLink() {
     const baseUrl = window.location.origin + window.location.pathname;
     if (currentSlide === 0) {
         return baseUrl;
-    } else if (currentSlide === totalSlides - 1) {
-        return baseUrl + '#/fin';
     } else {
         return baseUrl + `#/${currentSlide}`;
     }
