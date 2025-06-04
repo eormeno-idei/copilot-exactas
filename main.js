@@ -23,20 +23,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 function setupEventListeners() {
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
-    const printBtn = document.getElementById('print-btn');
-    const fullscreenBtn = document.getElementById('fullscreen-btn');
     
     if (prevBtn) {
         prevBtn.addEventListener('click', previousSlide);
     }
     if (nextBtn) {
         nextBtn.addEventListener('click', nextSlide);
-    }
-    if (printBtn) {
-        printBtn.addEventListener('click', exportToPDF);
-    }
-    if (fullscreenBtn) {
-        fullscreenBtn.addEventListener('click', toggleFullscreen);
     }
 }
 
@@ -199,43 +191,8 @@ document.addEventListener('keydown', function(event) {
             event.preventDefault();
             showSlide(totalSlides - 1);
             break;
-        case 'F11':
-            event.preventDefault();
-            toggleFullscreen();
-            break;
     }
 });
-
-// Exportar a PDF
-function exportToPDF() {
-    // Mostrar todos los slides para impresión
-    const slides = document.querySelectorAll('.slide');
-    slides.forEach(slide => slide.style.display = 'flex');
-    
-    // Configurar título del documento
-    document.title = 'GitHub Copilot Gratuito - FCEFyN UNSJ';
-    
-    // Abrir diálogo de impresión
-    window.print();
-    
-    // Restaurar vista normal después de imprimir
-    setTimeout(() => {
-        slides.forEach((slide, index) => {
-            slide.style.display = index === currentSlide ? 'flex' : 'none';
-        });
-    }, 1000);
-}
-
-// Pantalla completa
-function toggleFullscreen() {
-    if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(err => {
-            console.log(`Error intentando entrar en pantalla completa: ${err.message}`);
-        });
-    } else {
-        document.exitFullscreen();
-    }
-}
 
 // Inicializar router
 function initializeRouter() {
