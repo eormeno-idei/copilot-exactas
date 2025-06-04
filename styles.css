@@ -7,7 +7,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #dd6825 0%, #3eaf83 100%);
     height: 100vh;
     overflow: hidden;
 }
@@ -62,21 +62,21 @@ body {
 /* Estilos para títulos */
 h1 {
     font-size: 3rem;
-    color: #2c3e50;
+    color: #dd6825;
     margin-bottom: 30px;
     font-weight: 700;
 }
 
 h2 {
     font-size: 2.5rem;
-    color: #3498db;
+    color: #3eaf83;
     margin-bottom: 25px;
     font-weight: 600;
 }
 
 h3 {
     font-size: 1.8rem;
-    color: #2c3e50;
+    color: #dd6825;
     margin-bottom: 20px;
     font-weight: 500;
 }
@@ -107,7 +107,7 @@ li {
 
 li::before {
     content: "✓";
-    color: #27ae60;
+    color: #3eaf83;
     font-weight: bold;
     position: absolute;
     left: -20px;
@@ -115,11 +115,11 @@ li::before {
 
 /* Estilos para elementos destacados */
 .highlight {
-    background: linear-gradient(120deg, #a8e6cf 0%, #dcedc8 100%);
+    background: linear-gradient(120deg, #3eaf83 0%, #ffffff 100%);
     padding: 20px;
     border-radius: 10px;
     margin: 20px 0;
-    border-left: 5px solid #27ae60;
+    border-left: 5px solid #3eaf83;
 }
 
 .highlight ul {
@@ -136,23 +136,23 @@ li::before {
 
 .highlight li::before {
     content: "✓";
-    color: #27ae60;
+    color: #3eaf83;
     font-weight: bold;
     position: absolute;
     left: -20px;
 }
 
 .warning {
-    background: linear-gradient(120deg, #ffeaa7 0%, #fab1a0 100%);
+    background: linear-gradient(120deg, #dd6825 0%, #ffffff 100%);
     padding: 15px;
     border-radius: 8px;
     margin: 15px 0;
-    border-left: 5px solid #e17055;
+    border-left: 5px solid #dd6825;
 }
 
 /* Estilos para enlaces y botones */
 .cta-button {
-    background: linear-gradient(45deg, #3498db, #2980b9);
+    background: linear-gradient(45deg, #3eaf83, #dd6825);
     color: white;
     padding: 15px 30px;
     border: none;
@@ -168,7 +168,7 @@ li::before {
 
 .cta-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+    box-shadow: 0 5px 15px rgba(62, 175, 131, 0.4);
 }
 
 /* Navegación */
@@ -289,9 +289,16 @@ li::before {
     position: absolute;
     top: 20px;
     left: 30px;
-    font-size: 0.9rem;
-    color: #7f8c8d;
-    font-weight: 500;
+    width: 120px;
+    height: auto;
+    z-index: 10;
+}
+
+.logo img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .slide-number {
@@ -315,7 +322,21 @@ li::before {
     transition: transform 0.3s ease;
 }
 
-.slide-image:hover {
+/* Imagen QR más grande */
+.slide-image-qr {
+    max-width: 600px;
+    max-height: 500px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 15px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+    margin: 20px 0;
+    transition: transform 0.3s ease;
+}
+
+.slide-image:hover,
+.slide-image-qr:hover {
     transform: scale(1.05);
 }
 
@@ -329,16 +350,6 @@ li::before {
     width: 100%;
 }
 
-.slide-content {
-    text-align: left;
-}
-
-.slide-content h1,
-.slide-content h2 {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
 /* Layout centrado también con imagen a la derecha */
 .slide-centered-image {
     display: grid;
@@ -350,10 +361,15 @@ li::before {
     text-align: left;
 }
 
-.slide-centered-image h1,
-.slide-centered-image h2 {
-    text-align: center;
-    margin-bottom: 30px;
+/* Layout especial para slides con QR grandes */
+.slide-centered-image-qr {
+    display: grid;
+    grid-template-columns: 1fr 600px;
+    gap: 40px;
+    align-items: center;
+    max-width: 1400px;
+    width: 100%;
+    text-align: left;
 }
 
 /* Ajustes para imágenes en slides específicos */

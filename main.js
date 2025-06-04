@@ -76,7 +76,10 @@ async function loadAllSlides() {
             // Agregar logo y número de slide
             const logo = document.createElement('div');
             logo.className = 'logo';
-            logo.textContent = 'FCEFyN - UNSJ';
+            const logoImg = document.createElement('img');
+            logoImg.src = 'images/alternativa-exactas.png';
+            logoImg.alt = 'Logo FCEFyN - UNSJ';
+            logo.appendChild(logoImg);
             slideDiv.appendChild(logo);
             
             const slideNumber = document.createElement('div');
